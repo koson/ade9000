@@ -30,7 +30,7 @@
 #define ADE9000_MASK0 0x00000001		/*Enable EGYRDY interrupt*/				
 #define ADE9000_MASK1 0x00000000		/*MASK1 interrupts disabled*/
 #define ADE9000_EVENT_MASK 0x00000000	/*Events disabled */
-#define ADE9000_VLEVEL	0x0022EA28		/*Assuming Vnom=1/2 of full scale. 
+#define ADE9000_VLEVEL	0x0022EA28		/*Assuming Vnom=1/2 of full scale. */
 										/*Refer Technical reference manual for detailed calculations.*/
 #define ADE9000_DICOEFF 0x00000000 		/* Set DICOEFF= 0xFFFFE000 when integrator is enabled*/
 
@@ -46,7 +46,7 @@
 /*Waveform buffer Settings*/
 #define ADE9000_WFB_CFG 0x1000			/*Neutral current samples enabled, Resampled data enabled*/
 										/*Burst all channels*/
-#define WFB_ELEMENT_ARRAY_SIZE 512  	/*size of buffer to read. 512 Max.Each element IA,VA...IN has max 512 points 
+#define WFB_ELEMENT_ARRAY_SIZE 512  	/*size of buffer to read. 512 Max.Each element IA,VA...IN has max 512 points  */
 										/*[Size of waveform buffer/number of sample sets = 2048/4 = 512]*/
 										/*(Refer ADE9000 technical reference manual for more details)*/
 
@@ -226,21 +226,32 @@ struct PeriodRegs
 
 struct AngleRegs
 {
+	// V/V angle register value 
 	int16_t AngleReg_VA_VB;
 	int16_t AngleReg_VB_VC;
 	int16_t AngleReg_VA_VC;
+
+	// V/I angle register value
 	int16_t AngleReg_VA_IA;
 	int16_t AngleReg_VB_IB;
 	int16_t AngleReg_VC_IC;
+	
+	// I/I angle register value
 	int16_t AngleReg_IA_IB;
 	int16_t AngleReg_IB_IC;
 	int16_t AngleReg_IA_IC;
+
+	// V/V angle floating point value 
 	float AngleValue_VA_VB;
 	float AngleValue_VB_VC;
 	float AngleValue_VA_VC;
+
+	// V/I angle floating point value 
 	float AngleValue_VA_IA;
 	float AngleValue_VB_IB;
 	float AngleValue_VC_IC;
+	
+	// I/I angle floating point value 
 	float AngleValue_IA_IB;
 	float AngleValue_IB_IC;
 	float AngleValue_IA_IC;	
@@ -293,15 +304,26 @@ class ADE9000
 		/*Preferred public interface */
 		float L1I(); //instantaneous current on phase A
 		float L2I(); //instantaneous current on phase B
+		float L3I(); //instantaneous current on phase C
+
 		float L1Vrms(); //instantaneous rms voltage on phase A
 		float L2Vrms(); //instantaneous rms voltage on phase B
+		float L3Vrms(); //instantaneous rms voltage on phase C
+
+
 		float L1Watt(); //instantaneous wattage on phase A
 		float L2Watt(); //instantaneous wattage on phase B
+		float L3Watt(); //instantaneous wattage on phase C
+
 		float Watt(); //total wattage of A and B together
 		float L1VA(); //apparent power in volt amps on phase A
 		float L2VA(); //apparent power in volt amps on phase B
+		float L3VA(); //apparent power in volt amps on phase C
+
 		float L1VAR(); //reactive power in volt amps on phase A
 		float L2VAR(); //reactive power in volt amps on phase B
+		float L3VAR(); //reactive power in volt amps on phase C
+
 		float VA();   //total volt amps of phase A and B together
 		float frequency(); //line frequency of the system (measured at phase A)
 		float THD(); //total harmonic distortion, as a percentage
@@ -317,6 +339,11 @@ class ADE9000
 		void L2VCalPos(float calFactor); //voltage gain factor to turn reading into actual voltage - Phase B - Positive Current Flow 
 		void L2VCalNeg(float calFactor); //voltage gain factor to turn reading into actual voltage - Phase B - Negative Current Flow
 
+		void L3VCal(float calFactor); //voltage gain factor to turn reading into actual voltage - Phase C
+		void L3VCalPos(float calFactor); //voltage gain factor to turn reading into actual voltage - Phase C - Positive Current Flow 
+		void L3VCalNeg(float calFactor); //voltage gain factor to turn reading into actual voltage - Phase C - Negative Current Flow
+
+
 		float L1VCal(); //get factor for Phase A
 		float L1VCalPos(); //get factor for Phase A
 		float L1VCalNeg(); //get factor for Phase A
@@ -325,13 +352,23 @@ class ADE9000
 		float L2VCalPos(); //get factor for Phase B
 		float L2VCalNeg(); //get factor for Phase B
 
+		float L3VCal(); //get factor for Phase C 
+		float L3VCalPos(); //get factor for Phase C
+		float L3VCalNeg(); //get factor for Phase C
+
+
 		void L1ICal(float calFactor); //current gain factor to turn reading into actual current - Phase A
 		void L1ICalPos(float calFactor); //current gain factor to turn reading into actual current - Phase A
 		void L1ICalNeg(float calFactor); //current gain factor to turn reading into actual current - Phase A
 
 		void L2ICal(float calFactor); //current gain factor to turn reading into actual current - Phase B
-		void L2ICalPos(float calFactor); //current gain factor to turn reading into actual current - Phase A
-		void L2ICalNeg(float calFactor); //current gain factor to turn reading into actual current - Phase A
+		void L2ICalPos(float calFactor); //current gain factor to turn reading into actual current - Phase B
+		void L2ICalNeg(float calFactor); //current gain factor to turn reading into actual current - Phase B
+
+		void L3ICal(float calFactor); //current gain factor to turn reading into actual current - Phase C
+		void L3ICalPos(float calFactor); //current gain factor to turn reading into actual current - Phase C
+		void L3ICalNeg(float calFactor); //current gain factor to turn reading into actual current - Phase C
+
 
 		float L1ICal(); //get factor for Phase A
 		float L1ICalPos(); //get factor for Phase A
@@ -341,21 +378,34 @@ class ADE9000
 		float L2ICalPos(); //get factor for Phase B
 		float L2ICalNeg(); //get factor for Phase B
 
+		float L3ICal(); //get factor for Phase C
+		float L3ICalPos(); //get factor for Phase C
+		float L3ICalNeg(); //get factor for Phase C
+
 		void L1PCal(float calFactor); //power gain factor to turn reading into actual wattage - Phase A
 		void L1PCalPos(float calFactor); //power gain factor to turn reading into actual wattage - Phase A
 		void L1PCalNeg(float calFactor); //power gain factor to turn reading into actual wattage - Phase A
 
 		void L2PCal(float calFactor); //power gain factor to turn reading into actual wattage - Phase B
-		void L2PCalPos(float calFactor); //power gain factor to turn reading into actual wattage - Phase A
-		void L2PCalNeg(float calFactor); //power gain factor to turn reading into actual wattage - Phase A
+		void L2PCalPos(float calFactor); //power gain factor to turn reading into actual wattage - Phase B
+		void L2PCalNeg(float calFactor); //power gain factor to turn reading into actual wattage - Phase B
+
+		void L3PCal(float calFactor); //power gain factor to turn reading into actual wattage - Phase C
+		void L3PCalPos(float calFactor); //power gain factor to turn reading into actual wattage - Phase C
+		void L3PCalNeg(float calFactor); //power gain factor to turn reading into actual wattage - Phase C
 
 		float L1PCal(); //get factor for Phase A
 		float L1PCalPos(); //get factor for Phase A
 		float L1PCalNeg(); //get factor for Phase A
 
 		float L2PCal(); //get factor for Phase B
-		float L2PCalPos(); //get factor for Phase A
-		float L2PCalNeg(); //get factor for Phase A
+		float L2PCalPos(); //get factor for Phase B
+		float L2PCalNeg(); //get factor for Phase B
+
+		float L3PCal(); //get factor for Phase B
+		float L3PCalPos(); //get factor for Phase B
+		float L3PCalNeg(); //get factor for Phase B
+
 
 		void saveParams();
 		void loadParams();
@@ -365,10 +415,16 @@ class ADE9000
 		uint8_t  _chipSelect_Pin;
 		float m_L1vcal_p, m_L1vcal_n; //Voltage cal for positive and negative current
 		float m_L2vcal_p, m_L2vcal_n; //Voltage cal for positive and negative current
+		float m_L3vcal_p, m_L3vcal_n; //Voltage cal for positive and negative current
+
 		float m_L1ical_p, m_L1ical_n; //Current cal for positive and negative current
 		float m_L2ical_p, m_L2ical_n; //Current cal for positive and negative current
+		float m_L3ical_p, m_L3ical_n; //Current cal for positive and negative current
+
 		float m_L1pcal_p, m_L1pcal_n; //Power cal for positive and negative current
 		float m_L2pcal_p, m_L2pcal_n; //Power cal for positive and negative current
+		float m_L3pcal_p, m_L3pcal_n; //Power cal for positive and negative current
+
 		bool m_flipCurr;
 };
 

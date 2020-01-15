@@ -93,6 +93,51 @@ float ADE9000::L2I()
 	return outVal;
 }
 
+
+//instantaneous current on phase B (rms current)
+float ADE9000::L3I()
+{
+	float outVal;
+	int32_t valu = int32_t(SPI_Read_32(ADDR_CIRMS)); //Get rms current for phase A
+#ifdef DEBUGADE
+	Serial.print("CIRMS ");
+	Serial.println(valu, HEX);
+#endif
+	if (SPI_Read_16(ADDR_PHSIGN) & 16)
+		valu *= -1; //If bit 0 of sign register value is negative
+	if (m_flipCurr)
+		valu *= -1;
+	if (valu < 0)
+		outVal = valu * m_L3ical_n; //Apply calibration factor
+	else
+		outVal = valu * m_L3ical_p;
+	return outVal;
+}
+
+// //instantaneous current on phase B (rms current)
+// float ADE9000::NI()
+// {
+// 	float outVal;
+// 	int32_t valu = int32_t(SPI_Read_32(ADDR_NIRMS)); //Get rms current for phase A
+// #ifdef DEBUGADE
+// 	Serial.print("NIRMS ");
+// 	Serial.println(valu, HEX);
+// #endif
+// 	if (SPI_Read_16(ADDR_PHSIGN) & 4)
+// 		valu *= -1; //If bit 0 of sign register value is negative
+// 	if (m_flipCurr)
+// 		valu *= -1;
+// 	if (valu < 0)
+// 		outVal = valu * m_L3ical_n; //Apply calibration factor
+// 	else
+// 		outVal = valu * m_L3ical_p;
+// 	return outVal;
+// }
+
+
+
+
+
 //instantaneous rms voltage on phase A
 float ADE9000::L1Vrms()
 {
@@ -130,6 +175,26 @@ float ADE9000::L2Vrms()
 		outVal = valu * m_L2vcal_p;
 	return outVal;
 }
+
+//instantaneous rms voltage on phase C
+float ADE9000::L3Vrms()
+{
+	float outVal;
+	bool negCurr = SPI_Read_16(ADDR_PHSIGN) & 16;
+	if (m_flipCurr)
+		negCurr = !negCurr;
+	int32_t valu = int32_t(SPI_Read_32(ADDR_CVRMS));
+#ifdef DEBUGADE
+	Serial.print("BVRMS ");
+	Serial.println(valu, HEX);
+#endif
+	if (negCurr)
+		outVal = valu * m_L3vcal_n;
+	else
+		outVal = valu * m_L3vcal_p;
+	return outVal;
+}
+
 
 //instantaneous wattage on phase A
 float ADE9000::L1Watt()
@@ -198,6 +263,19 @@ float ADE9000::L2VA()
 	float outVal = valu * m_L2pcal_p;
 	return outVal;
 }
+
+//instantaneous apparent power in volt amps on phase B
+float ADE9000::L3VA()
+{
+	int32_t valu = int32_t(SPI_Read_32(ADDR_CVA));
+#ifdef DEBUGADE
+	Serial.print("CVA ");
+	Serial.println(valu, HEX);
+#endif
+	float outVal = valu * m_L3pcal_p;
+	return outVal;
+}
+
 
 float ADE9000::L1VAR()
 {
@@ -307,6 +385,14 @@ void ADE9000::L2VCal(float calFactor)
 	m_L2vcal_n = calFactor;
 }
 
+//voltage gain factor to turn reading into actual voltage - Phase C
+void ADE9000::L3VCal(float calFactor)
+{
+	m_L3vcal_p = calFactor;
+	m_L3vcal_n = calFactor;
+}
+
+
 //voltage gain factor to turn reading into actual voltage - Phase B - Positive Current Flow
 void ADE9000::L2VCalPos(float calFactor)
 {
@@ -380,6 +466,14 @@ void ADE9000::L2ICal(float calFactor)
 	m_L2ical_p = calFactor;
 	m_L2ical_n = calFactor;
 }
+
+//current gain factor to turn reading into actual current - Phase C
+void ADE9000::L3ICal(float calFactor)
+{
+	m_L3ical_p = calFactor;
+	m_L3ical_n = calFactor;
+}
+
 
 //current gain factor to turn reading into actual current - Phase B - Positive Current Flow
 void ADE9000::L2ICalPos(float calFactor)
@@ -599,7 +693,7 @@ Output: Resampled data returned in structure
 */
 void ADE9000::SPI_Burst_Read_Resampled_Wfb(uint16_t Address, uint16_t Read_Element_Length, ResampledWfbData *ResampledData)
 {
-	uint16_t temp;
+	// uint16_t temp;
 	uint16_t i;
 
 	digitalWrite(_chipSelect_Pin, LOW);
