@@ -9,9 +9,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "ADE9000.h"
-// #include "Preferences.h"
-
-// Preferences preferences;
 
 //uncomment next line to get debugging output from this library
 #define DEBUGADE
@@ -21,80 +18,6 @@ ADE9000::ADE9000()
 	_chipSelect_Pin = PA15;
 	m_flipCurr = false;
 }
-
-// void ADE9000::loadParams()
-// {
-//      preferences.begin("ADE9000", false);
-// 		/*
-// 		//I don't know that we want to mess with these. Maybe just have our own conversion factors
-// 		//Also, the hardware stores these in integer format so maybe store them that way instead.
-//     OverVSetpoint = preferences.getFloat("AIGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("BIGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("CIGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("NIGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("AVGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("BVGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("CVGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("APHCal0", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("BPHCal0", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("CPHCal0", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("APGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("BPGain", 1.0f);
-// 		OverVSetpoint = preferences.getFloat("CPGain", 1.0f);
-// 		*/
-// 		m_L1vcal_p = preferences.getFloat("L1VCal", 1.0f);
-// 		m_L1vcal_n = preferences.getFloat("L1VCalNeg", m_L1vcal_p);
-// 		m_L2vcal_p = preferences.getFloat("L2VCal", 1.0f);
-// 		m_L2vcal_n = preferences.getFloat("L2VCalNeg", m_L2vcal_p);
-// 		m_L1ical_p = preferences.getFloat("L1ICal", 1.0f);
-// 		m_L1ical_n = preferences.getFloat("L1ICalNeg", m_L1ical_p);
-// 		m_L2ical_p = preferences.getFloat("L2ICal", 1.0f);
-// 		m_L2ical_n = preferences.getFloat("L2ICalNeg", m_L2ical_p);
-// 		m_L1pcal_p = preferences.getFloat("L1PCal", 1.0f);
-// 		m_L1pcal_n = preferences.getFloat("L1PCalNeg", m_L1pcal_p);
-// 		m_L2pcal_p = preferences.getFloat("L2PCal", 1.0f);
-// 		m_L2pcal_n = preferences.getFloat("L2PCalNeg", m_L2pcal_p);
-// 		KWH = preferences.getFloat("KWH", 1.0f);
-// 		m_flipCurr = preferences.getInt("FlipCurr", 0);
-
-//     preferences.end();
-// }
-
-// void ADE9000::saveParams()
-// {
-//     preferences.begin("ADE9000", false);
-// 		/*
-//     preferences.putFloat("AIGain", 1.0f);
-// 		preferences.putFloat("BIGain", 1.0f);
-// 		preferences.putFloat("CIGain", 1.0f);
-// 		preferences.putFloat("NIGain", 1.0f);
-// 		preferences.putFloat("AVGain", 1.0f);
-// 		preferences.putFloat("BVGain", 1.0f);
-// 		preferences.putFloat("CVGain", 1.0f);
-// 		preferences.putFloat("APHCal0", 1.0f);
-// 		preferences.putFloat("BPHCal0", 1.0f);
-// 		preferences.putFloat("CPHCal0", 1.0f);
-// 		preferences.putFloat("APGain", 1.0f);
-// 		preferences.putFloat("BPGain", 1.0f);
-// 		preferences.putFloat("CPGain", 1.0f);
-// 		*/
-// 		preferences.putFloat("L1VCal", m_L1vcal_p);
-// 		preferences.putFloat("L2VCal", m_L2vcal_p);
-// 		preferences.putFloat("L1ICal", m_L1ical_p);
-// 		preferences.putFloat("L2ICal", m_L2ical_p);
-// 		preferences.putFloat("L1PCal", m_L1pcal_p);
-// 		preferences.putFloat("L2PCal", m_L2pcal_p);
-// 		preferences.putFloat("L1VCalNeg", m_L1vcal_n);
-// 		preferences.putFloat("L2VCalNeg", m_L2vcal_n);
-// 		preferences.putFloat("L1ICalNeg", m_L1ical_n);
-// 		preferences.putFloat("L2ICalNeg", m_L2ical_n);
-// 		preferences.putFloat("L1PCalNeg", m_L1pcal_n);
-// 		preferences.putFloat("L2PCalNeg", m_L2pcal_n);
-// 		preferences.putFloat("KWH", KWH);
-// 		preferences.putInt("FlipCurr", m_flipCurr);
-
-//     preferences.end();
-// }
 
 /* 
 Description: Initializes the ADE9000. The initial settings for registers are defined in ADE9000API.h header file
