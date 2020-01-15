@@ -4,9 +4,9 @@
 /*Follow directions shown on serial monitor */
 
 /*User Inputs*/
-#define NOMINAL_INPUT_VOLTAGE 110       //Nominal Calibrating RMS Voltage on all phases (Vrms)
+#define NOMINAL_INPUT_VOLTAGE 220       //Nominal Calibrating RMS Voltage on all phases (Vrms)
 #define NOMINAL_INPUT_CURRENT 5         //Nominal Calibrating RMS Current on all phases (Irms)
-#define INPUT_FREQUENCY 60              //Nominal Calibrating frequency. Used to calculate Omega for phase calibration.Ensure ACCMODE register is set to correct frequency
+#define INPUT_FREQUENCY 50              //Nominal Calibrating frequency. Used to calculate Omega for phase calibration.Ensure ACCMODE register is set to correct frequency
 #define CALIBRATION_ANGLE_DEGREES 60	//Calibration Angle in Degrees.Used for phase calibration
 
 /*Transfer function*/

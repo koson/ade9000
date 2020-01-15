@@ -11,7 +11,7 @@
 #include "ADE9000.h"
 
 //uncomment next line to get debugging output from this library
-#define DEBUGADE
+// #define DEBUGADE
 
 ADE9000::ADE9000()
 {
@@ -58,6 +58,10 @@ float ADE9000::L1I()
 {
 	float outVal;
 	int32_t valu = int32_t(SPI_Read_32(ADDR_AIRMS)); //Get rms current for phase A
+#ifdef DEBUGADE
+	Serial.print("AIRMS ");
+	Serial.println(valu, HEX);
+#endif
 	if (SPI_Read_16(ADDR_PHSIGN) & 1)
 		valu *= -1; //If bit 0 of sign register value is negative
 	if (m_flipCurr)
@@ -74,6 +78,10 @@ float ADE9000::L2I()
 {
 	float outVal;
 	int32_t valu = int32_t(SPI_Read_32(ADDR_BIRMS)); //Get rms current for phase A
+#ifdef DEBUGADE
+	Serial.print("BIRMS ");
+	Serial.println(valu, HEX);
+#endif
 	if (SPI_Read_16(ADDR_PHSIGN) & 4)
 		valu *= -1; //If bit 0 of sign register value is negative
 	if (m_flipCurr)
@@ -148,7 +156,7 @@ float ADE9000::L2Watt()
 	float outVal;
 	int32_t valu = int32_t(SPI_Read_32(ADDR_BWATT));
 #ifdef DEBUGADE
-	Serial.print("AWATT ");
+	Serial.print("BWATT ");
 	Serial.println(valu, HEX);
 #endif
 	if (m_flipCurr)
