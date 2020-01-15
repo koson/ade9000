@@ -3,8 +3,10 @@
 
 ADE9000 ade;
 
+ 
 void setup()
 {
+ 
   delay(2000); //give some time for everything to come up
   Serial.begin(115200);
   //8Mhz SPI speed (20Mhz is max), chip select on pin 25
