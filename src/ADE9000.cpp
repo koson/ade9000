@@ -94,6 +94,8 @@ float ADE9000::L2I()
 }
 
 
+
+
 //instantaneous current on phase C (rms current)
 float ADE9000::L3I()
 {
@@ -113,6 +115,29 @@ float ADE9000::L3I()
 		outVal = valu * m_L3ical_p;
 	return outVal;
 }
+
+
+//instantaneous current on Neutral (rms current)
+float ADE9000::NI()
+{
+	float outVal;
+	int32_t valu = int32_t(SPI_Read_32(ADDR_NIRMS)); //Get rms current for phase A
+#ifdef DEBUGADE
+	Serial.print("NIRMS ");
+	Serial.println(valu, HEX);
+#endif
+	if (SPI_Read_16(ADDR_PHSIGN) & 16)
+		valu *= -1; //If bit 0 of sign register value is negative
+	if (m_flipCurr)
+		valu *= -1;
+	if (valu < 0)
+		outVal = valu * m_Nical_n; //Apply calibration factor
+	else
+		outVal = valu * m_Nical_p;
+	return outVal;
+}
+
+
 
 
 //instantaneous rms voltage on phase A
@@ -580,6 +605,47 @@ float ADE9000::L3ICalNeg()
 }
 
 
+// Neutral current calibrations 
+//current gain factor to turn reading into actual current - Neutral
+void ADE9000::NICal(float calFactor)
+{
+	m_Nical_p = calFactor;
+	m_Nical_n = calFactor;
+}
+
+//current gain factor to turn reading into actual current - Neutral - Positive Current Flow
+void ADE9000::NICalPos(float calFactor)
+{
+	m_Nical_p = calFactor;
+}
+
+//current gain factor to turn reading into actual current - Neutral - Negative Current Flow
+void ADE9000::NICalNeg(float calFactor)
+{
+	m_Nical_n = calFactor;
+}
+
+
+
+//get factor for Neutral
+float ADE9000::NICal()
+{
+	return m_Nical_p;
+}
+
+//get factor for Neutral
+float ADE9000::NICalPos()
+{
+	return m_Nical_p;
+}
+
+//get factor for Neutral
+float ADE9000::NICalNeg()
+{
+	return m_Nical_n;
+}
+
+
 //power gain factor to turn reading into actual power - Phase A
 void ADE9000::L1PCal(float calFactor)
 {
@@ -838,6 +904,7 @@ void ADE9000::ReadActivePowerRegs(ActivePowerRegs *Data)
 	Data->ActivePowerReg_B = int32_t(SPI_Read_32(ADDR_BWATT));
 	Data->ActivePowerReg_C = int32_t(SPI_Read_32(ADDR_CWATT));
 }
+
 
 void ADE9000::ReadReactivePowerRegs(ReactivePowerRegs *Data)
 {

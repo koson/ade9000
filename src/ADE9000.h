@@ -305,6 +305,7 @@ class ADE9000
 		float L1I(); //instantaneous current on phase A
 		float L2I(); //instantaneous current on phase B
 		float L3I(); //instantaneous current on phase C
+		float NI(); //instantaneous current on Neutral
 
 		float L1Vrms(); //instantaneous rms voltage on phase A
 		float L2Vrms(); //instantaneous rms voltage on phase B
@@ -369,6 +370,9 @@ class ADE9000
 		void L3ICalPos(float calFactor); //current gain factor to turn reading into actual current - Phase C
 		void L3ICalNeg(float calFactor); //current gain factor to turn reading into actual current - Phase C
 
+		void NICal(float calFactor); //current gain factor to turn reading into actual current - Phase C
+		void NICalPos(float calFactor); //current gain factor to turn reading into actual current - Phase C
+		void NICalNeg(float calFactor); //current gain factor to turn reading into actual current - Phase C
 
 		float L1ICal(); //get factor for Phase A
 		float L1ICalPos(); //get factor for Phase A
@@ -381,6 +385,11 @@ class ADE9000
 		float L3ICal(); //get factor for Phase C
 		float L3ICalPos(); //get factor for Phase C
 		float L3ICalNeg(); //get factor for Phase C
+
+		float NICal(); //get factor for Phase C
+		float NICalPos(); //get factor for Phase C
+		float NICalNeg(); //get factor for Phase C
+
 
 		void L1PCal(float calFactor); //power gain factor to turn reading into actual wattage - Phase A
 		void L1PCalPos(float calFactor); //power gain factor to turn reading into actual wattage - Phase A
@@ -420,6 +429,7 @@ class ADE9000
 		float m_L1ical_p, m_L1ical_n; //Current cal for positive and negative current
 		float m_L2ical_p, m_L2ical_n; //Current cal for positive and negative current
 		float m_L3ical_p, m_L3ical_n; //Current cal for positive and negative current
+		float m_Nical_p,  m_Nical_n;  //Current cal for positive and negative current
 
 		float m_L1pcal_p, m_L1pcal_n; //Power cal for positive and negative current
 		float m_L2pcal_p, m_L2pcal_n; //Power cal for positive and negative current
