@@ -22,7 +22,7 @@
 #define ADE9000_CONFIG1	0x000E			/*CF3/ZX pin outputs Zero crossing, CF4 = DREADY */
 #define ADE9000_CONFIG2	0x0C00			/*Default High pass corner frequency of 1.25Hz*/
 #define ADE9000_CONFIG3	0x0000			/*Peak and overcurrent detection disabled*/
-#define ADE9000_ACCMODE 0x0000			/*60Hz operation, 3P4W Wye configuration, signed accumulation*/
+#define ADE9000_ACCMODE 0x0000			/*50Hz operation, 3W Delta configuration, signed accumulation*/
 										/*Clear bit 8 i.e. ACCMODE=0x00xx for 50Hz operation*/
 										/*ACCMODE=0x0x9x for 3Wire delta when phase B is used as reference*/	
 #define ADE9000_TEMP_CFG 0x000C			/*Temperature sensor enabled*/
