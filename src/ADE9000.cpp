@@ -13,6 +13,12 @@
 //uncomment next line to get debugging output from this library
 // #define DEBUGADE
 
+#define SPI_HAS_TRANSACTION 1
+
+#if defined(SPI_HAS_TRANSACTION)
+static SPISettings mySPISettings;
+#endif
+
 ADE9000::ADE9000()
 {
 	_chipSelect_Pin = PA15;
@@ -43,7 +49,7 @@ void ADE9000::begin(void)
 	SPI_Write_32(ADDR_DICOEFF, ADE9000_DICOEFF);
 	SPI_Write_16(ADDR_EGY_TIME, ADE9000_EGY_TIME);
 	SPI_Write_16(ADDR_EP_CFG, ADE9000_EP_CFG); //Energy accumulation ON
-	SPI_Write_16(ADDR_RUN, ADE9000_RUN_ON);	//DSP ON
+	SPI_Write_16(ADDR_RUN, ADE9000_RUN_ON);	   //DSP ON
 											   //  loadParams();
 }
 
@@ -93,9 +99,6 @@ float ADE9000::L2I()
 	return outVal;
 }
 
-
-
-
 //instantaneous current on phase C (rms current)
 float ADE9000::L3I()
 {
@@ -116,7 +119,6 @@ float ADE9000::L3I()
 	return outVal;
 }
 
-
 //instantaneous current on Neutral (rms current)
 float ADE9000::NI()
 {
@@ -136,9 +138,6 @@ float ADE9000::NI()
 		outVal = valu * m_Nical_p;
 	return outVal;
 }
-
-
-
 
 //instantaneous rms voltage on phase A
 float ADE9000::L1Vrms()
@@ -197,7 +196,6 @@ float ADE9000::L3Vrms()
 	return outVal;
 }
 
-
 //instantaneous wattage on phase A
 float ADE9000::L1Watt()
 {
@@ -255,7 +253,6 @@ float ADE9000::L3Watt()
 	return outVal;
 }
 
-
 //total wattage of A and B together
 float ADE9000::Watt()
 {
@@ -298,7 +295,6 @@ float ADE9000::L3VA()
 	return outVal;
 }
 
-
 float ADE9000::L1VAR()
 {
 	int32_t valu = int32_t(SPI_Read_32(ADDR_AVAR));
@@ -331,7 +327,6 @@ float ADE9000::L3VAR()
 	float outVal = valu * m_L3pcal_p;
 	return outVal;
 }
-
 
 //total volt amps of phase A, B and C together
 float ADE9000::VA()
@@ -419,7 +414,6 @@ void ADE9000::L2VCal(float calFactor)
 	m_L2vcal_n = calFactor;
 }
 
-
 //voltage gain factor to turn reading into actual voltage - Phase B - Positive Current Flow
 void ADE9000::L2VCalPos(float calFactor)
 {
@@ -487,7 +481,6 @@ float ADE9000::L3VCalNeg()
 	return m_L3vcal_n;
 }
 
-
 //current gain factor to turn reading into actual current - Phase A
 void ADE9000::L1ICal(float calFactor)
 {
@@ -532,8 +525,6 @@ void ADE9000::L2ICal(float calFactor)
 	m_L2ical_n = calFactor;
 }
 
-
-
 //current gain factor to turn reading into actual current - Phase B - Positive Current Flow
 void ADE9000::L2ICalPos(float calFactor)
 {
@@ -564,7 +555,6 @@ float ADE9000::L2ICalNeg()
 	return m_L2ical_n;
 }
 
-
 //current gain factor to turn reading into actual current - Phase C
 void ADE9000::L3ICal(float calFactor)
 {
@@ -584,8 +574,6 @@ void ADE9000::L3ICalNeg(float calFactor)
 	m_L3ical_n = calFactor;
 }
 
-
-
 //get factor for Phase C
 float ADE9000::L3ICal()
 {
@@ -604,8 +592,7 @@ float ADE9000::L3ICalNeg()
 	return m_L3ical_n;
 }
 
-
-// Neutral current calibrations 
+// Neutral current calibrations
 //current gain factor to turn reading into actual current - Neutral
 void ADE9000::NICal(float calFactor)
 {
@@ -625,8 +612,6 @@ void ADE9000::NICalNeg(float calFactor)
 	m_Nical_n = calFactor;
 }
 
-
-
 //get factor for Neutral
 float ADE9000::NICal()
 {
@@ -644,7 +629,6 @@ float ADE9000::NICalNeg()
 {
 	return m_Nical_n;
 }
-
 
 //power gain factor to turn reading into actual power - Phase A
 void ADE9000::L1PCal(float calFactor)
@@ -720,7 +704,6 @@ float ADE9000::L2PCalNeg()
 	return m_L2pcal_n;
 }
 
-
 //power gain factor to turn reading into actual power - Phase C
 void ADE9000::L3PCal(float calFactor)
 {
@@ -758,6 +741,14 @@ float ADE9000::L3PCalNeg()
 	return m_L3pcal_n;
 }
 
+void ADE9000::SetIO(uint32_t MISO, uint32_t MOSI, uint32_t SCLK)
+{
+	SPI.setMISO(MISO);
+	SPI.setMOSI(MOSI);
+	SPI.setSCLK(SCLK);
+
+}
+
 /* 
 Description: Initializes the arduino SPI port using SPI.h library
 Input: SPI speed, chip select pin
@@ -770,10 +761,11 @@ void ADE9000::SPI_Init(uint32_t SPI_speed, uint8_t chipSelect_Pin)
 	SPI.setMOSI(PB5);
 	SPI.setSCLK(PB3);
 	SPI.begin();													   //Initiate SPI port
-	SPI.beginTransaction(SPISettings(SPI_speed, MSBFIRST, SPI_MODE0)); //Setup SPI parameters
+	//SPI.beginTransaction(SPISettings(SPI_speed, MSBFIRST, SPI_MODE0)); //Setup SPI parameters
 	pinMode(chipSelect_Pin, OUTPUT);								   //Set Chip select pin as output
 	digitalWrite(chipSelect_Pin, HIGH);								   //Set Chip select pin high
 	_chipSelect_Pin = chipSelect_Pin;
+	mySPISettings = SPISettings(SPI_speed, MSBFIRST, SPI_MODE0);
 }
 
 /* 
@@ -786,10 +778,11 @@ void ADE9000::SPI_Write_16(uint16_t Address, uint16_t Data)
 	uint16_t temp_address;
 
 	digitalWrite(_chipSelect_Pin, LOW);
+	SPI.beginTransaction(mySPISettings);
 	temp_address = ((Address << 4) & 0xFFF0); //shift address  to align with cmd packet
 	SPI.transfer16(temp_address);
 	SPI.transfer16(Data);
-
+	SPI.endTransaction();
 	digitalWrite(_chipSelect_Pin, HIGH);
 }
 
@@ -806,14 +799,13 @@ void ADE9000::SPI_Write_32(uint16_t Address, uint32_t Data)
 
 	temp_highpacket = (Data & 0xFFFF0000) >> 16;
 	temp_lowpacket = (Data & 0x0000FFFF);
-
 	digitalWrite(_chipSelect_Pin, LOW);
-
+	SPI.beginTransaction(mySPISettings);
 	temp_address = ((Address << 4) & 0xFFF0); //shift address  to align with cmd packet
 	SPI.transfer16(temp_address);
 	SPI.transfer16(temp_highpacket);
 	SPI.transfer16(temp_lowpacket);
-
+	SPI.endTransaction();
 	digitalWrite(_chipSelect_Pin, HIGH);
 }
 
@@ -828,11 +820,11 @@ uint16_t ADE9000::SPI_Read_16(uint16_t Address)
 	uint16_t returnData;
 
 	digitalWrite(_chipSelect_Pin, LOW);
-
+	SPI.beginTransaction(mySPISettings);
 	temp_address = (((Address << 4) & 0xFFF0) + 8);
 	SPI.transfer16(temp_address);
 	returnData = SPI.transfer16(0);
-
+	SPI.endTransaction();
 	digitalWrite(_chipSelect_Pin, HIGH);
 	return returnData;
 }
@@ -850,14 +842,13 @@ uint32_t ADE9000::SPI_Read_32(uint16_t Address)
 	uint32_t returnData;
 
 	digitalWrite(_chipSelect_Pin, LOW);
-
+	SPI.beginTransaction(mySPISettings);
 	temp_address = (((Address << 4) & 0xFFF0) + 8);
 	SPI.transfer16(temp_address);
 	temp_highpacket = SPI.transfer16(0);
 	temp_lowpacket = SPI.transfer16(0);
-
+	SPI.endTransaction();
 	digitalWrite(_chipSelect_Pin, HIGH);
-
 	returnData = temp_highpacket << 16;
 	returnData = returnData + temp_lowpacket;
 
@@ -876,7 +867,7 @@ void ADE9000::SPI_Burst_Read_Resampled_Wfb(uint16_t Address, uint16_t Read_Eleme
 	uint16_t i;
 
 	digitalWrite(_chipSelect_Pin, LOW);
-
+	SPI.beginTransaction(mySPISettings);
 	SPI.transfer16(((Address << 4) & 0xFFF0) + 8); //Send the starting address
 
 	//burst read the data upto Read_Length
@@ -890,6 +881,7 @@ void ADE9000::SPI_Burst_Read_Resampled_Wfb(uint16_t Address, uint16_t Read_Eleme
 		ResampledData->VC_Resampled[i] = SPI.transfer16(0);
 		ResampledData->IN_Resampled[i] = SPI.transfer16(0);
 	}
+	SPI.endTransaction();
 	digitalWrite(_chipSelect_Pin, HIGH);
 }
 
@@ -904,7 +896,6 @@ void ADE9000::ReadActivePowerRegs(ActivePowerRegs *Data)
 	Data->ActivePowerReg_B = int32_t(SPI_Read_32(ADDR_BWATT));
 	Data->ActivePowerReg_C = int32_t(SPI_Read_32(ADDR_CWATT));
 }
-
 
 void ADE9000::ReadReactivePowerRegs(ReactivePowerRegs *Data)
 {
@@ -1149,7 +1140,7 @@ void ADE9000::ReadTempRegnValue(TemperatureRegnValue *Data)
 
 	trim = SPI_Read_32(ADDR_TEMP_TRIM);
 	gain = (trim & 0xFFFF);				   //Extract 16 LSB
-	offset = ((trim >> 16) & 0xFFFF);	  //Extract 16 MSB
+	offset = ((trim >> 16) & 0xFFFF);	   //Extract 16 MSB
 	tempReg = SPI_Read_16(ADDR_TEMP_RSLT); //Read Temperature result register
 	tempValue = (float)(offset >> 5) - ((float)tempReg * (float)gain / (float)65536);
 

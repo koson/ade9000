@@ -277,7 +277,8 @@ class ADE9000
 		uint16_t SPI_Read_16(uint16_t Address);
 		uint32_t SPI_Read_32(uint16_t Address);
 		void SPI_Burst_Read_Resampled_Wfb(uint16_t Address, uint16_t Read_Element_Length, ResampledWfbData *ResampledData);    
-		
+		void SetIO(uint32_t MOSI, uint32_t MISO, uint32_t SCLK);
+
 		/*ADE9000 Calculated Parameter Read Functions*/
 		//These might turn into protected functions
 		void ReadActivePowerRegs(ActivePowerRegs *Data);
